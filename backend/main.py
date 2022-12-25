@@ -4,17 +4,22 @@ from cachetools import LRUCache
 import os 
 import json
 from flask_cors import CORS
+from evaluate_answers import evaluate_answers
 app = Flask(__name__)
 CORS(app)
 # Create a cache to store shuffled quiz questions for each student
 question_cache = LRUCache(maxsize=1000)
-questions = [    {        'question': 'What is the capital of France?',        'choices': ['Paris', 'London', 'Berlin', 'Rome'],
+grades_cache = LRUCache(maxsize=1000)
+questions = [    
+    {        
+        'question': 'What is the capital of France?',
+        'choices': ['Paris', 'London', 'Berlin', 'Rome'],
         'answer': 'Paris',
         'question_type': 'radio'
     },
     {
         'question': 'Which of the following countries are in Europe?',
-        'choices': ['Spain', "France" 'Japan', 'Brazil', 'Australia'],
+        'choices': ['Spain', "France" , 'Japan', 'Brazil', 'Australia'],
         'answer': ['Spain', 'France'],
         'question_type': 'checkbox'
     },
@@ -40,8 +45,12 @@ def register():
     random.shuffle(questions)
 
     # Store the shuffled questions in the cache
-    question_cache[id] = questions.copy()
-
+    question_cache[id] =questions.copy()
+    grades_cache[id] = {
+            "name":name,
+            "student_id":  student_id, 
+            "grade" : 0 
+        }
     # Return a success message
     return {'message': 'Successfully registered student and shuffled questions.'}
 
@@ -55,12 +64,7 @@ def get_question():
 
     # Get the next question from the list
     if len(questions)==0 :
-        return {
-            "question" : "finished",
-            "choices" : [],
-            "question_type":'radio'
-
-        }
+        return grades_cache[id]
     question = dict(questions[0])
     question.pop("answer")
     # Return the question
@@ -68,22 +72,16 @@ def get_question():
 
 @app.route('/submit-answer', methods=['POST' , 'OPTIONS'])
 def submit_answer():
-    # Get the unique identifier and answer from the request
-    print("hi....")
-    print(request.headers)
-    print(request.data)
     if request.data :
         students_answer = json.loads(request.data.decode())
         id  = students_answer['id']
         answer = students_answer['choice']
-        print(question_cache[id][0])
-        print(answer)
+        if answer : grades_cache[id]['grade'] += evaluate_answers(question_cache[id][0], answer)
         question_cache[id].pop(0)
-    # print(request.json())
-    # print(request.args)
-    # print(request.json())
-    return  "okay"
-
+        return  "okay"
+    else :
+        return  "your answer is not formatted correctly .."
+    
 
 if __name__ == '__main__':
     port = os.environ.get("PORT", 8500)

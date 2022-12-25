@@ -70,24 +70,55 @@
         // Prevent the form from being submitted
         event.preventDefault();
   
-        // Get the selected choice from the form
-        const choice = form.elements.choice.value;
-  
-        // Send a POST request to the backend server with the selected choice and user ID
-        fetch('http://localhost:8500/submit-answer', {
-          method: 'POST',
-          body: JSON.stringify({
-            choice: choice,
-            id: '{{ id }}'
-          }),
-          headers: {
-            'Content-Type': 'application/json'
+        const chosenOptions = [];
+
+        // Loop through the form elements
+        for (let i = 0; i < form.elements.length; i++) {
+          // Get the current element
+          const element = form.elements[i];
+          console.log(element.type)
+          // Check if the element is a radio button or checkbox
+          if (element.type === 'radio' || element.type === 'checkbox') {
+            // If the element is a radio button and is checked, add its value to the list
+            if (element.checked) {
+              chosenOptions.push(element.value);
+            }
           }
-        }).then(() => {
-          // Redirect the user to the next question
-          window.location = '/next?id={{ id }}';
+        }
+        
+        // Load the environment variables from the .env file
+        // const env = require('dotenv').config();
+
+        // Get the backend server's URL from the environment variables
+        const backendUrl = "http://localhost:8500";
+
+        // Create the JSON object to send to the server
+        const data = {
+        choice: chosenOptions,
+        id: '{{id}}'
+        };
+        console.log(data)
+        // Send the POST request to the server
+        fetch(`${backendUrl}/submit-answer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        mode:"cors"
+        })
+        .then((response) => {
+        // Do something with the response from the server
+        console.log(response);
+        window.location = '/next?id={{ id }}';
+
+        })
+        .catch((error) => {
+        // Handle any errors
+        console.error(error);
         });
-      });
+
+        });
     </script>
   </body>
 </html>

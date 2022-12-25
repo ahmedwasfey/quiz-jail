@@ -2,6 +2,9 @@ import requests
 from flask import Flask, redirect, render_template, request
 import os
 app = Flask(__name__)
+from flask_cors import CORS
+CORS(app)
+
 BACKEND_SERVER = os.environ.get("BACKEND_SERVER")
 @app.route('/', methods=['GET'])
 def main_page():
@@ -37,6 +40,8 @@ def next():
     # Get the question data from the response
     question_data = question_response.json()
     print(question_data)
+    if "grade" in question_data :
+        return render_template("grade.html", student_name=question_data['name'], student_id=question_data['student_id'], grade=question_data['grade'])
     # Render the next page with the question data
     return render_template('next.html', question=question_data['question'], choices=question_data['choices'], question_type=question_data['question_type'], id=id)
 if __name__ == '__main__':

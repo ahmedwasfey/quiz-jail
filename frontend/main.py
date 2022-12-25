@@ -33,6 +33,10 @@ def questions():
 @app.route('/next', methods=['GET'])
 def next():
     print("getting next question.... " )
+    answer_data = request.args.get("data")
+    print(answer_data)
+    response = requests.post(BACKEND_SERVER+f'/submit-answer', json=answer_data)
+    response.raise_for_status()
     # Get the question data from the request
     id = request.args.get('id')
     question_response = requests.get(BACKEND_SERVER+f'/get-question?id={id}')

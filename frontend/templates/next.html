@@ -86,38 +86,12 @@
           }
         }
         
-        // Load the environment variables from the .env file
-        // const env = require('dotenv').config();
-
-        // Get the backend server's URL from the environment variables
-        const backendUrl = "http://localhost:8500";
-
-        // Create the JSON object to send to the server
         const data = {
         choice: chosenOptions,
         id: '{{id}}'
         };
         console.log(data)
-        // Send the POST request to the server
-        fetch(`${backendUrl}/submit-answer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data),
-        mode:"cors"
-        })
-        .then((response) => {
-        // Do something with the response from the server
-        console.log(response);
-        window.location = '/next?id={{ id }}';
-
-        })
-        .catch((error) => {
-        // Handle any errors
-        console.error(error);
-        });
-
+        window.location = `/next?id={{id}}&data=${encodeURIComponent(JSON.stringify(data))}`;
         });
     </script>
   </body>

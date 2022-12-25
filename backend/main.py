@@ -10,7 +10,7 @@ CORS(app)
 # Create a cache to store shuffled quiz questions for each student
 question_cache = LRUCache(maxsize=1000)
 grades_cache = LRUCache(maxsize=1000)
-questions = [    
+questions =[    
     {        
         'question': 'What is the capital of France?',
         'choices': ['Paris', 'London', 'Berlin', 'Rome'],
@@ -73,7 +73,9 @@ def get_question():
 @app.route('/submit-answer', methods=['POST' , 'OPTIONS'])
 def submit_answer():
     if request.data :
-        students_answer = json.loads(request.data.decode())
+        print(request.data)
+        students_answer = json.loads(json.loads(request.data.decode()))
+        print(students_answer)
         id  = students_answer['id']
         answer = students_answer['choice']
         if answer : grades_cache[id]['grade'] += evaluate_answers(question_cache[id][0], answer)
@@ -81,7 +83,7 @@ def submit_answer():
         return  "okay"
     else :
         return  "your answer is not formatted correctly .."
-    
+   
 
 if __name__ == '__main__':
     port = os.environ.get("PORT", 8500)

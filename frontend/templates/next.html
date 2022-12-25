@@ -1,0 +1,93 @@
+<html>
+<head>
+  <!-- Some styles for the page -->
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fafafa;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+    .question {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .choices {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .choice {
+      width: 45%;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    input[type=radio],
+    input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+    <div>
+      <h1>Quiz</h1>
+      <!-- Quiz content will be dynamically added here -->
+      <div id="quiz">
+        <div>{{ question }}</div>
+        <form id="form">
+          {% for choice in choices %}
+            {% if question_type == 'radio' %}
+              <input type="radio" name="choice" value="{{ choice }}" id="{{ choice }}">
+              <label for="{{ choice }}">{{ choice }}</label><br>
+            {% elif question_type == 'checkbox' %}
+              <input type="checkbox" name="choice" value="{{ choice }}" id="{{ choice }}">
+              <label for="{{ choice }}">{{ choice }}</label><br>
+            {% endif %}
+          {% endfor %}
+          <input type="submit" value="Submit Answer">
+        </form>
+      </div>
+    </div>
+    <script>
+      // Get the form element
+      const form = document.getElementById('form');
+  
+      // Add a submit event listener to the form
+      form.addEventListener('submit', (event) => {
+        // Prevent the form from being submitted
+        event.preventDefault();
+  
+        // Get the selected choice from the form
+        const choice = form.elements.choice.value;
+  
+        // Send a POST request to the backend server with the selected choice and user ID
+        fetch('http://localhost:8500/submit-answer', {
+          method: 'POST',
+          body: JSON.stringify({
+            choice: choice,
+            id: '{{ id }}'
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(() => {
+          // Redirect the user to the next question
+          window.location = '/next?id={{ id }}';
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<html>
+    <head>
+  <style>
+    /* Some styles for the page */
+    body {
+      font-family: sans-serif;
+      background-color: #fafafa;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+    input[type=text] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      resize: vertical;
+    }
+    input[type=submit] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Quiz</h1>
+    <p>Enter your full name and student ID to get started:</p>
+    <form id="form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+      <label for="student-id">Student ID</label>
+      <input type="text" id="student-id" name="student-id" required>
+      <input type="submit" value="Start Quiz">
+    </form>
+  </div>
+  <script>
+    // Generate a unique identifier for each user
+    function generateId() {
+      return Math.random().toString(36).substr(2, 9);
+    }
+
+    // Get the form element
+    const form = document.getElementById('form');
+
+    // Add a submit event listener to the form
+    form.addEventListener('submit', (event) => {
+      // Prevent the form from being submitted
+      event.preventDefault();
+
+      // Get the user's name and student ID from the form
+      const name = document.getElementById('name').value;
+      const studentId = document.getElementById('student-id').value;
+
+      // Generate a unique identifier for the user
+      const id = generateId()+studentId;
+
+      // Redirect the user to the page of questions, including the user's name, student ID, and unique identifier as URL parameters
+      window.location = `/questions?name=${name}&student_id=${studentId}&id=${id}`;
+    });
+  </script>
+</body>
+</html>

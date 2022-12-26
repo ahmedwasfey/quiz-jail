@@ -1,13 +1,13 @@
 import csv
 import random
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, render_template, request, send_file
 from cachetools import LRUCache
 import os 
 import json
 import time
 from flask_cors import CORS
 from evaluate_answers import evaluate_answers
-from time_diff import is_timeout
+from time_diff import is_timeout , get_remaining_time
 from threading import Lock
 app = Flask(__name__)
 CORS(app)
@@ -77,11 +77,11 @@ def get_question():
     id = request.args.get('id')
 
     # Get the shuffled questions from the cache
-    questions = question_cache[id]
+    student_questions = question_cache[id]
 
     # Get the next question from the list
     timed_out = is_timeout(grades_cache[id]['start_time'], time.time() , quiz_time)
-    if len(questions)==0 or timed_out :
+    if len(student_questions)==0 or timed_out :
         cache_lock.acquire()
         try :
             grades_cache[id]["is_timeout"]=timed_out
@@ -89,10 +89,11 @@ def get_question():
         finally:
             cache_lock.release()
         return grades_cache[id]
-    question = dict(questions[0])
+    question = dict(student_questions[0])
     question.pop("answer")
     # Return the question
-    return question
+    return {"question":question , "time_remaining": get_remaining_time(grades_cache[id]['start_time'], time.time() , quiz_time)
+     , "questions_remaining" :len(student_questions) }
 
 @app.route('/submit-answer', methods=['POST' , 'OPTIONS'])
 def submit_answer():

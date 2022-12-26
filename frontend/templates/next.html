@@ -70,7 +70,7 @@
             <label for="{{ choice }}">{{ choice }}</label><br><br>
             {% endif %}
           {% endfor %}
-          <input type="submit" value="Submit Answer">
+          <input type="submit"  id="submit_button" value="Submit Answer">
         </form>
       </div>
     </div>
@@ -107,5 +107,40 @@
         window.location = `/submit?id={{id}}&data=${encodeURIComponent(JSON.stringify(data))}`;
         });
     </script>
+    <div class="timer">
+      <p>Questions remaining: {{ questions_remaining }}</p>
+      <p>Time remaining: <span id="minutes_remaining">{{ time_remaining // 60 }}</span>:<span id="seconds_remaining">{{ time_remaining % 60 }}</span></p>
+    </div>
+    
+    <script>
+      // Initialize variables
+      var timeRemaining = {{ time_remaining }};
+      var timerInterval = null;
+    
+      // Start timer countdown
+      function startTimer() {
+        timerInterval = setInterval(function() {
+          timeRemaining--;
+          // seconds = String(seconds).padStart(2, '0');
+          document.getElementById('minutes_remaining').innerHTML = Math.floor(timeRemaining / 60);
+          document.getElementById('seconds_remaining').innerHTML =  String(timeRemaining % 60).padStart(2, '0');;
+    
+          if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+          }
+        }, 1000);
+      }
+    
+      // Submit quiz when time is up
+      function submitQuiz() {
+        document.getElementById('submit_button').click();
+
+      }
+    
+      // Start timer when page loads
+      window.onload = startTimer;
+    </script>
+    
   </body>
 </html>

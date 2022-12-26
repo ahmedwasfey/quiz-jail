@@ -1,3 +1,4 @@
+import random
 import requests
 from flask import Flask, redirect, render_template, request
 import os
@@ -50,6 +51,11 @@ def next():
     if "grade" in question_data :
         return render_template("grade.html", student_name=question_data['name'], student_id=question_data['student_id'], grade=question_data['grade'], is_timeout = question_data['is_timeout'])
     # Render the next page with the question data
-    return render_template('next.html', question=question_data['question'], choices=question_data['choices'], question_type=question_data['question_type'], id=id)
+    question = question_data["question"]
+
+    time_remaining = question_data["time_remaining"]
+    questions_remaining = question_data["questions_remaining"]
+    return render_template('next.html', question=question['question'],questions_remaining=questions_remaining ,
+        choices=random.sample(question['choices'], k=len(question['choices'])), question_type=question['question_type'],time_remaining=time_remaining, id=id)
 if __name__ == '__main__':
     app.run()

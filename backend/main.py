@@ -36,7 +36,7 @@ def process_upload():
     if "quiz_time" in questions : 
         quiz_time = questions.get("quiz_time", 10)
         questions = questions.get("questions")
-    print("questions =", questions)
+    print("number of questions =", len(questions))
 
     return render_template("uploaded.html")
 

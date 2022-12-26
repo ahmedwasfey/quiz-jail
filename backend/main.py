@@ -16,7 +16,7 @@ cache_lock = Lock()
 question_cache = LRUCache(maxsize=1000)
 grades_cache = LRUCache(maxsize=1000)
 questions =[]
-quiz_time=2
+quiz_time=10
 @app.route('/', methods=['GET'])
 def main_page():
     return render_template('index.html')

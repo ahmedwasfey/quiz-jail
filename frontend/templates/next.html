@@ -29,7 +29,7 @@
       margin-bottom: 20px;
     }
     label {
-      display: block;
+      display: inline-block;
       margin-bottom: 8px;
       font-size: 16px;
     }
@@ -39,22 +39,35 @@
       height: 20px;
       margin-right: 8px;
     }
+    input[type=submit] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
     <div>
       <h1>Quiz</h1>
+      <br>
       <!-- Quiz content will be dynamically added here -->
       <div id="quiz">
-        <div>{{ question }}</div>
+        <div><h3>{{ question }}</h3></div>
+        <br><br>
         <form id="form">
           {% for choice in choices %}
             {% if question_type == 'radio' %}
-              <input type="radio" name="choice" value="{{ choice }}" id="{{ choice }}">
-              <label for="{{ choice }}">{{ choice }}</label><br>
+            <input type="radio" name="choice" value="{{ choice }}" id="{{ choice }}">
+            <label for="{{ choice }}">{{ choice }}</label><br><br>
             {% elif question_type == 'checkbox' %}
-              <input type="checkbox" name="choice" value="{{ choice }}" id="{{ choice }}">
-              <label for="{{ choice }}">{{ choice }}</label><br>
+            <input type="checkbox" name="choice" value="{{ choice }}" id="{{ choice }}">
+            <label for="{{ choice }}">{{ choice }}</label><br><br>
             {% endif %}
           {% endfor %}
           <input type="submit" value="Submit Answer">
@@ -91,7 +104,7 @@
         id: '{{id}}'
         };
         console.log(data)
-        window.location = `/next?id={{id}}&data=${encodeURIComponent(JSON.stringify(data))}`;
+        window.location = `/submit?id={{id}}&data=${encodeURIComponent(JSON.stringify(data))}`;
         });
     </script>
   </body>

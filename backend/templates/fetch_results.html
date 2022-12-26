@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Download</title>
+</head>
+<body>
+  <h1>Data Download</h1>
+  <p>Here is the data you requested:</p>
+  <table>
+    {% for key, value in data.items() %}
+      <tr>
+        <td>{{ key }}</td>
+        <td>{{ value }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p>Would you like to download the data as a JSON file or a CSV file?</p>
+  <button onclick="location.href='/download-json'"> Download as json </button>
+  <button onclick="location.href='/download-csv'">Download as CSV</button>
+</body>
+</html>

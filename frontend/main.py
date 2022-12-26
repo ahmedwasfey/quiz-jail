@@ -25,18 +25,21 @@ def questions():
     })
 
     # Get the question data from the response
-    question_data = question_response.json()
+    question_response.raise_for_status()
 
     # Redirect the user to the next endpoint, passing the question data as URL parameters
     return redirect(f'/next?id={id}')
-
-@app.route('/next', methods=['GET'])
-def next():
-    print("getting next question.... " )
+@app.route('/submit', methods=['GET'])
+def submit():
     answer_data = request.args.get("data")
+    id = request.args.get('id')
     print(answer_data)
     response = requests.post(BACKEND_SERVER+f'/submit-answer', json=answer_data)
     response.raise_for_status()
+    return redirect(f'/next?id={id}')
+@app.route('/next', methods=['GET'])
+def next():
+    print("getting next question.... " )
     # Get the question data from the request
     id = request.args.get('id')
     question_response = requests.get(BACKEND_SERVER+f'/get-question?id={id}')
@@ -45,7 +48,7 @@ def next():
     question_data = question_response.json()
     print(question_data)
     if "grade" in question_data :
-        return render_template("grade.html", student_name=question_data['name'], student_id=question_data['student_id'], grade=question_data['grade'])
+        return render_template("grade.html", student_name=question_data['name'], student_id=question_data['student_id'], grade=question_data['grade'], is_timeout = question_data['is_timeout'])
     # Render the next page with the question data
     return render_template('next.html', question=question_data['question'], choices=question_data['choices'], question_type=question_data['question_type'], id=id)
 if __name__ == '__main__':

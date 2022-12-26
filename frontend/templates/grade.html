@@ -1,10 +1,16 @@
 <html>
   <head>
-    <title>{{ student_name }}'s Grades</title>
+    <title>Quiz Grades</title>
   </head>
   <body>
+
     <h1>{{ student_name }}'s Grades</h1>
-    <p>Student ID: {{ student_id }}</p>
-    <p>Grade: {{ grade }}</p>
+    <h3>Student ID: {{ student_id }}</h3>
+    <h3>Grade: {{ grade }}</h3>
+    {% if is_timeout %}
+      <p style="color: red;">Your time has run out.</p>
+    {% else %}
+      <p style="color: green;">You have finished all the questions.</p>
+    {% endif %}
   </body>
 </html>
